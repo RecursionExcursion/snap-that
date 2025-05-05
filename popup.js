@@ -1,3 +1,6 @@
+
+//TODO move major actions to a background.js script
+
 document.addEventListener("DOMContentLoaded", () => {
   /** @type {HTMLButtonElement| null} */
   const snapButton = document.querySelector("#snapButton");
