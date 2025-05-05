@@ -5,26 +5,22 @@ const localStore = chrome.storage.local;
 document.addEventListener("DOMContentLoaded", async () => {
   const container = document.querySelector("#popupContainer") as HTMLDivElement;
   const snapButton = document.querySelector("#snapButton") as HTMLButtonElement;
-  const modeLabel = document.querySelector("#modeLabel") as HTMLLabelElement;
-  const modeInput = document.querySelector("#modeInput") as HTMLInputElement;
   const messageLabel = document.querySelector(
     "#messageLabel"
   ) as HTMLLabelElement;
 
-  /** @param {boolean} modeIsCopy  */
-  const setInputMode = (modeIsCopy: boolean) => {
-    modeInput.checked = modeIsCopy;
-    saveDownloadModeFlag(!modeIsCopy);
+  const modeButton = document.querySelector("#modeButton") as HTMLButtonElement;
+
+  const setInputMode = (modeIsDownload: boolean) => {
+    saveDownloadModeFlag(modeIsDownload);
   };
 
-  const updateModeLabel = () => {
-    modeLabel.textContent = modeInput.checked ? "COPY" : "DOWNLOAD";
+  const updateModeButton = async (b: boolean) => {
+    modeButton.textContent = b ? "Download" : "Copy";
   };
-  
-//   modeInput.hidden = true
-  modeInput.checked = !(await isDownloadMode());
+
   messageLabel.hidden = true;
-  updateModeLabel();
+  updateModeButton(await isDownloadMode());
   container.style.display = "";
 
   snapButton.onclick = async () => {
@@ -57,10 +53,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   };
 
-  modeInput.addEventListener("change", () => {
-    updateModeLabel();
-    setInputMode(modeInput.checked);
-  });
+  modeButton.onclick = async () => {
+    const newMode = !(await isDownloadMode());
+    saveDownloadModeFlag(newMode);
+    updateModeButton(newMode);
+    setInputMode(newMode);
+  };
 });
 
 function saveDownloadModeFlag(set: boolean) {
